@@ -1,0 +1,9 @@
+{
+	"name": "adf-upds-capa-lab-8wd",
+	"location": "eastus2",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "e265c0c9-f0d6-46c0-b531-9d1eedff54df",
+		"tenantId": "3705cdfe-1991-48fc-9579-b0da85eec9ee"
+	}
+}
