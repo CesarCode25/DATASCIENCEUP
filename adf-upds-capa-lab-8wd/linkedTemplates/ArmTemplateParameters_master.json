@@ -5,6 +5,9 @@
 		"factoryName": {
 			"value": "adf-upds-capa-lab-8wd"
 		},
+		"LinkedService_ADLS_properties_typeProperties_url": {
+			"value": "https://dlsupdscapalab3l4.dfs.core.windows.net/"
+		},
 		"containerUri": {
 			"value": ""
 		},
