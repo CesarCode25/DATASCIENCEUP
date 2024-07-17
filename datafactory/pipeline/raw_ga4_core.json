@@ -39,7 +39,32 @@
 							"type": "DelimitedTextReadSettings"
 						}
 					},
-					"enableStaging": false
+					"sink": {
+						"type": "ParquetSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings",
+							"maxConcurrentConnections": 2,
+							"copyBehavior": "PreserveHierarchy",
+							"metadata": [
+								{
+									"name": "zona",
+									"value": "master"
+								}
+							]
+						},
+						"formatSettings": {
+							"type": "ParquetWriteSettings"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
 				},
 				"inputs": [
 					{
@@ -49,6 +74,17 @@
 							"zona": "raw",
 							"directorio": "sharedknow/sharedknow/users",
 							"archivo": "sk_users.csv"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DS_ADLS_PARQUET",
+						"type": "DatasetReference",
+						"parameters": {
+							"zona": "master",
+							"directorio": "warehouse",
+							"archivo": "usuario.parquet2"
 						}
 					}
 				]
