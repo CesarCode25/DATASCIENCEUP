@@ -24,7 +24,10 @@
 							},
 							{
 								"name": "update",
-								"value": ""
+								"value": {
+									"value": "@utcNow()",
+									"type": "Expression"
+								}
 							}
 						],
 						"storeSettings": {
