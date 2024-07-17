@@ -127,11 +127,11 @@
 									"parameters": {
 										"zona": "raw",
 										"directorio": {
-											"value": "@concat('sharedknow/sharedknow/',item())",
+											"value": "@concat('sharedknow/sharedknow/',item().Lista_tabla)",
 											"type": "Expression"
 										},
 										"archivo": {
-											"value": "@concat('sk_',item(),'.csv')",
+											"value": "@concat('sk_',item().Lista_tabla,'.csv')",
 											"type": "Expression"
 										}
 									}
@@ -144,7 +144,10 @@
 									"parameters": {
 										"zona": "master",
 										"directorio": "warehouse",
-										"archivo": "usuario.parquet2"
+										"archivo": {
+											"value": "@concat(item().Lista_tabla,'.parquet')",
+											"type": "Expression"
+										}
 									}
 								}
 							]
