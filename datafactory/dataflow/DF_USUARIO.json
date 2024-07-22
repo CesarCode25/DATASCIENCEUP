@@ -1,0 +1,74 @@
+{
+	"name": "DF_USUARIO",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_ADLS_PARQUET",
+						"type": "DatasetReference"
+					},
+					"name": "SourceUsuario"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_ADLS_PARQUET",
+						"type": "DatasetReference"
+					},
+					"name": "SinkHubUsuario"
+				}
+			],
+			"transformations": [
+				{
+					"name": "DerivedColumn"
+				},
+				{
+					"name": "HubUsuarioSelect"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          Id as string,",
+				"          CreationDate as string,",
+				"          DownVotes as string,",
+				"          LastAccessDate as string,",
+				"          Reputation as string,",
+				"          UpVotes as string,",
+				"          Views as string,",
+				"          AccountId as string,",
+				"          Email as string,",
+				"          location as string,",
+				"          update as string,",
+				"          owner as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> SourceUsuario",
+				"SourceUsuario derive(HK_USUARIO = Id,",
+				"          CODUSUARIO = AccountId,",
+				"          FECCARGA = currentUTC(),",
+				"          REGFUENTE = \"SHAREDKNOW\") ~> DerivedColumn",
+				"DerivedColumn select(mapColumn(",
+				"          HK_USUARIO,",
+				"          CODUSUARIO,",
+				"          FECCARGA,",
+				"          REGFUENTE",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> HubUsuarioSelect",
+				"HubUsuarioSelect sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SinkHubUsuario"
+			]
+		}
+	}
+}
