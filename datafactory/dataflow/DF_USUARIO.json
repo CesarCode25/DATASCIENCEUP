@@ -19,6 +19,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "SinkHubUsuario"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_ADLS_PARQUET",
+						"type": "DatasetReference"
+					},
+					"name": "SinkSatUsuario"
 				}
 			],
 			"transformations": [
@@ -27,6 +34,9 @@
 				},
 				{
 					"name": "HubUsuarioSelect"
+				},
+				{
+					"name": "SatUsuario"
 				}
 			],
 			"scriptLines": [
@@ -51,7 +61,10 @@
 				"SourceUsuario derive(HK_USUARIO = Id,",
 				"          CODUSUARIO = AccountId,",
 				"          FECCARGA = currentUTC(),",
-				"          REGFUENTE = \"SHAREDKNOW\") ~> DerivedColumn",
+				"          REGFUENTE = \"SHAREDKNOW\",",
+				"          FECCREATION = CreationDate,",
+				"          NUMDOWNVOTES = DownVotes,",
+				"          EMAIL = Email) ~> DerivedColumn",
 				"DerivedColumn select(mapColumn(",
 				"          HK_USUARIO,",
 				"          CODUSUARIO,",
@@ -60,6 +73,16 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> HubUsuarioSelect",
+				"DerivedColumn select(mapColumn(",
+				"          HK_USUARIO,",
+				"          FECCARGA,",
+				"          REGFUENTE,",
+				"          FECCREATION,",
+				"          NUMDOWNVOTES,",
+				"          EMAIL = DerivedColumn@EMAIL",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SatUsuario",
 				"HubUsuarioSelect sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'parquet',",
@@ -67,7 +90,16 @@
 				"     preCommands: [],",
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> SinkHubUsuario"
+				"     skipDuplicateMapOutputs: true) ~> SinkHubUsuario",
+				"SatUsuario sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> SinkSatUsuario"
 			]
 		}
 	}
