@@ -15,6 +15,47 @@
 					"variableName": "mensaje",
 					"value": "hola"
 				}
+			},
+			{
+				"name": "DataFlowUsuario",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DF_USUARIO",
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"SourceUsuario": {
+								"zona": "master",
+								"directorio": "warehouse",
+								"archivo": "usuario.parquet"
+							},
+							"SinkHubUsuario": {
+								"zona": "master",
+								"directorio": "silver",
+								"archivo": "hub_usuario.parquet"
+							},
+							"SinkSatUsuario": {
+								"zona": "master",
+								"directorio": "silver",
+								"archivo": "sat_usuario.parquet"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
 			}
 		],
 		"variables": {
