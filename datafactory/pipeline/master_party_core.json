@@ -5,6 +5,8 @@
 			{
 				"name": "Set variable1",
 				"type": "SetVariable",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [],
 				"policy": {
 					"secureOutput": false,
@@ -40,12 +42,12 @@
 							},
 							"SinkHubUsuario": {
 								"zona": "master",
-								"directorio": "silver",
+								"directorio": "silver/hub_usuario",
 								"archivo": "hub_usuario.parquet"
 							},
 							"SinkSatUsuario": {
 								"zona": "master",
-								"directorio": "silver",
+								"directorio": "silver/sat_usuario",
 								"archivo": "sat_usuario.parquet"
 							}
 						}
