@@ -5,6 +5,9 @@
 			"referenceName": "LinkedService_ADLS",
 			"type": "LinkedServiceReference"
 		},
+		"folder": {
+			"name": "TrabajoFinal"
+		},
 		"annotations": [],
 		"type": "DelimitedText",
 		"typeProperties": {
