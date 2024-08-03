@@ -1,0 +1,72 @@
+{
+	"name": "DRestaurantes",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LinkedService_ADLS",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "restaurant.csv",
+				"fileSystem": "trabajofinal"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "Prop_0",
+				"type": "String"
+			},
+			{
+				"name": "id",
+				"type": "String"
+			},
+			{
+				"name": "name",
+				"type": "String"
+			},
+			{
+				"name": "city",
+				"type": "String"
+			},
+			{
+				"name": "rating",
+				"type": "String"
+			},
+			{
+				"name": "rating_count",
+				"type": "String"
+			},
+			{
+				"name": "cost",
+				"type": "String"
+			},
+			{
+				"name": "cuisine",
+				"type": "String"
+			},
+			{
+				"name": "lic_no",
+				"type": "String"
+			},
+			{
+				"name": "link",
+				"type": "String"
+			},
+			{
+				"name": "address",
+				"type": "String"
+			},
+			{
+				"name": "menu",
+				"type": "String"
+			}
+		]
+	}
+}
