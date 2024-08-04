@@ -5,6 +5,17 @@
 			"referenceName": "LinkedService_ADLS",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"zona": {
+				"type": "string"
+			},
+			"directorio": {
+				"type": "string"
+			},
+			"archivo": {
+				"type": "string"
+			}
+		},
 		"folder": {
 			"name": "TrabajoFinal"
 		},
@@ -13,7 +24,18 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileSystem": "trabajofinal"
+				"fileName": {
+					"value": "@dataset().archivo",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@dataset().directorio",
+					"type": "Expression"
+				},
+				"fileSystem": {
+					"value": "@dataset().zona",
+					"type": "Expression"
+				}
 			},
 			"compressionCodec": "snappy"
 		},

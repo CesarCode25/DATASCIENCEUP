@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Copy data1",
+				"name": "Copiar",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
@@ -68,7 +68,7 @@
 						"referenceName": "OrdenesConsolidado_Parquet",
 						"type": "DatasetReference",
 						"parameters": {
-							"": "trabajofinal"
+							"zona": "trabajofinal"
 						}
 					}
 				]
