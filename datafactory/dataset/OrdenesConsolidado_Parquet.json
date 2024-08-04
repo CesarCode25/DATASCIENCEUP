@@ -7,13 +7,15 @@
 		},
 		"parameters": {
 			"zona": {
-				"type": "string"
+				"type": "string",
+				"defaultValue": "trabajofinal"
 			},
 			"directorio": {
 				"type": "string"
 			},
 			"archivo": {
-				"type": "string"
+				"type": "string",
+				"defaultValue": "ordenes"
 			}
 		},
 		"folder": {
