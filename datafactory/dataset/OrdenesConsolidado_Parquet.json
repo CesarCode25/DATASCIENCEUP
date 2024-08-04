@@ -1,0 +1,22 @@
+{
+	"name": "OrdenesConsolidado_Parquet",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LinkedService_ADLS",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "TrabajoFinal"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileSystem": "trabajofinal"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	}
+}
