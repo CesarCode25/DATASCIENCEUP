@@ -1,0 +1,55 @@
+{
+	"name": "DOrdenes",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LinkedService_ADLS",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "TrabajoFinal"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "orders.csv",
+				"fileSystem": "trabajofinal"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "Prop_0",
+				"type": "String"
+			},
+			{
+				"name": "order_date",
+				"type": "String"
+			},
+			{
+				"name": "sales_qty",
+				"type": "String"
+			},
+			{
+				"name": "sales_amount",
+				"type": "String"
+			},
+			{
+				"name": "currency",
+				"type": "String"
+			},
+			{
+				"name": "user_id",
+				"type": "String"
+			},
+			{
+				"name": "r_id",
+				"type": "String"
+			}
+		]
+	}
+}
