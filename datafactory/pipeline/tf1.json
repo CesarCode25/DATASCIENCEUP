@@ -17,6 +17,10 @@
 				"typeProperties": {
 					"source": {
 						"type": "DelimitedTextSource",
+						"additionalColumns": {
+							"type": "Expression",
+							"value": "@utcnow()"
+						},
 						"storeSettings": {
 							"type": "AzureBlobFSReadSettings",
 							"recursive": true,
@@ -55,7 +59,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "OrdenesConsolidado_Parquet",
+						"referenceName": "DFood_Parquet",
 						"type": "DatasetReference",
 						"parameters": {
 							"zona": "trabajofinal",

@@ -1,5 +1,5 @@
 {
-	"name": "OrdenesConsolidado_Parquet",
+	"name": "DFood_Parquet",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "LinkedService_ADLS",
