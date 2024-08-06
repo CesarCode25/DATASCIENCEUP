@@ -37,17 +37,14 @@
 						"datasetParameters": {
 							"SourceUsuario": {
 								"zona": "master",
-								"directorio": "warehouse",
 								"archivo": "usuario.parquet"
 							},
 							"SinkHubUsuario": {
 								"zona": "master",
-								"directorio": "silver/hub_usuario",
 								"archivo": "hub_usuario.parquet"
 							},
 							"SinkSatUsuario": {
 								"zona": "master",
-								"directorio": "silver/sat_usuario",
 								"archivo": "sat_usuario.parquet"
 							}
 						}

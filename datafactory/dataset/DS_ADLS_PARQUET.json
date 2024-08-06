@@ -9,9 +9,6 @@
 			"zona": {
 				"type": "string"
 			},
-			"directorio": {
-				"type": "string"
-			},
 			"archivo": {
 				"type": "string"
 			}
@@ -21,9 +18,14 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "@dataset().archivo",
-				"folderPath": "@dataset().directorio",
-				"fileSystem": "@dataset().zona"
+				"fileName": {
+					"value": "@dataset().archivo",
+					"type": "Expression"
+				},
+				"fileSystem": {
+					"value": "@dataset().zona",
+					"type": "Expression"
+				}
 			},
 			"compressionCodec": "snappy"
 		},

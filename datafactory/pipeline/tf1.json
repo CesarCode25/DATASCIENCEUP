@@ -49,13 +49,8 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "DS_ADLS_CSV",
-						"type": "DatasetReference",
-						"parameters": {
-							"zona": "raw",
-							"directorio": "sharedknow/sharedknow/users",
-							"archivo": "sk_users.csv"
-						}
+						"referenceName": "DFood",
+						"type": "DatasetReference"
 					}
 				],
 				"outputs": [
