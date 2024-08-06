@@ -1,0 +1,28 @@
+{
+	"name": "DF_Food",
+	"properties": {
+		"folder": {
+			"name": "TrabajoFinal"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DFood_Parquet",
+						"type": "DatasetReference"
+					},
+					"name": "fuentefood"
+				}
+			],
+			"sinks": [],
+			"transformations": [],
+			"scriptLines": [
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> fuentefood"
+			]
+		}
+	}
+}
