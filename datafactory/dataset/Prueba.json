@@ -1,0 +1,43 @@
+{
+	"name": "Prueba",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LinkedService_ADLS",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "TrabajoFinal"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "DFoodPrueba.csv",
+				"fileSystem": "trabajofinal"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "n",
+				"type": "String"
+			},
+			{
+				"name": "f_id",
+				"type": "String"
+			},
+			{
+				"name": "item",
+				"type": "String"
+			},
+			{
+				"name": "veg_or_non_veg",
+				"type": "String"
+			}
+		]
+	}
+}
