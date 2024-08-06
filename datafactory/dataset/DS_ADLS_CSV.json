@@ -7,13 +7,16 @@
 		},
 		"parameters": {
 			"zona": {
-				"type": "string"
+				"type": "string",
+				"defaultValue": "raw"
 			},
 			"directorio": {
-				"type": "string"
+				"type": "string",
+				"defaultValue": "sharedknow/sharedknow"
 			},
 			"archivo": {
-				"type": "string"
+				"type": "string",
+				"defaultValue": "users"
 			}
 		},
 		"annotations": [],

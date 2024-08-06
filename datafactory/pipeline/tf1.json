@@ -17,16 +17,6 @@
 				"typeProperties": {
 					"source": {
 						"type": "DelimitedTextSource",
-						"additionalColumns": [
-							{
-								"name": "ubicación",
-								"value": "$$FILEPATH"
-							},
-							{
-								"name": "FechaDescarga",
-								"value": "@formatDatetime(utcnow())"
-							}
-						],
 						"storeSettings": {
 							"type": "AzureBlobFSReadSettings",
 							"recursive": true,
@@ -59,8 +49,13 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "DOrdenes",
-						"type": "DatasetReference"
+						"referenceName": "DS_ADLS_CSV",
+						"type": "DatasetReference",
+						"parameters": {
+							"zona": "raw",
+							"directorio": "sharedknow/sharedknow/users",
+							"archivo": "sk_users.csv"
+						}
 					}
 				],
 				"outputs": [
@@ -68,7 +63,8 @@
 						"referenceName": "OrdenesConsolidado_Parquet",
 						"type": "DatasetReference",
 						"parameters": {
-							"zona": "trabajofinal"
+							"zona": "trabajofinal",
+							"archivo": "ordenes"
 						}
 					}
 				]
