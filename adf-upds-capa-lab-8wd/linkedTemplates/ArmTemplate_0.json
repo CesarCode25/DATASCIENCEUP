@@ -91,41 +91,6 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/tf1')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Copy data1",
-						"type": "Copy",
-						"state": "Inactive",
-						"onInactiveMarkAs": "Succeeded",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"enableStaging": false
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"folder": {
-					"name": "04_trabajofinal"
-				},
-				"annotations": []
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/LinkedService_ADLS')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -137,6 +102,122 @@
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DMenu')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LinkedService_ADLS",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "TrabajoFinal"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "menu.csv",
+						"fileSystem": "trabajofinal"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "Prop_0",
+						"type": "String"
+					},
+					{
+						"name": "menu_id",
+						"type": "String"
+					},
+					{
+						"name": "r_id",
+						"type": "String"
+					},
+					{
+						"name": "f_id",
+						"type": "String"
+					},
+					{
+						"name": "cuisine",
+						"type": "String"
+					},
+					{
+						"name": "price",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LinkedService_ADLS')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DOrdenes')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LinkedService_ADLS",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "TrabajoFinal"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "orders.csv",
+						"fileSystem": "trabajofinal"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "Prop_0",
+						"type": "String"
+					},
+					{
+						"name": "order_date",
+						"type": "String"
+					},
+					{
+						"name": "sales_qty",
+						"type": "String"
+					},
+					{
+						"name": "sales_amount",
+						"type": "String"
+					},
+					{
+						"name": "currency",
+						"type": "String"
+					},
+					{
+						"name": "user_id",
+						"type": "String"
+					},
+					{
+						"name": "r_id",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LinkedService_ADLS')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/DRestaurantes')]",
@@ -229,13 +310,16 @@
 				},
 				"parameters": {
 					"zona": {
-						"type": "string"
+						"type": "string",
+						"defaultValue": "raw"
 					},
 					"directorio": {
-						"type": "string"
+						"type": "string",
+						"defaultValue": "sharedknow/sharedknow"
 					},
 					"archivo": {
-						"type": "string"
+						"type": "string",
+						"defaultValue": "users"
 					}
 				},
 				"annotations": [],
@@ -285,9 +369,6 @@
 					"zona": {
 						"type": "string"
 					},
-					"directorio": {
-						"type": "string"
-					},
 					"archivo": {
 						"type": "string"
 					}
@@ -301,10 +382,6 @@
 							"value": "@dataset().archivo",
 							"type": "Expression"
 						},
-						"folderPath": {
-							"value": "@dataset().directorio",
-							"type": "Expression"
-						},
 						"fileSystem": {
 							"value": "@dataset().zona",
 							"type": "Expression"
@@ -313,170 +390,6 @@
 					"compressionCodec": "snappy"
 				},
 				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LinkedService_ADLS')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DFood')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LinkedService_ADLS",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "TrabajoFinal"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": "food.csv",
-						"fileSystem": "trabajofinal"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"name": "n",
-						"type": "String"
-					},
-					{
-						"name": "f_id",
-						"type": "String"
-					},
-					{
-						"name": "item",
-						"type": "String"
-					},
-					{
-						"name": "veg_or_non_veg",
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LinkedService_ADLS')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DOrdenes')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LinkedService_ADLS",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "TrabajoFinal"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": "orders.csv",
-						"fileSystem": "trabajofinal"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"name": "Prop_0",
-						"type": "String"
-					},
-					{
-						"name": "order_date",
-						"type": "String"
-					},
-					{
-						"name": "sales_qty",
-						"type": "String"
-					},
-					{
-						"name": "sales_amount",
-						"type": "String"
-					},
-					{
-						"name": "currency",
-						"type": "String"
-					},
-					{
-						"name": "user_id",
-						"type": "String"
-					},
-					{
-						"name": "r_id",
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LinkedService_ADLS')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DMenu')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LinkedService_ADLS",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "TrabajoFinal"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": "menu.csv",
-						"fileSystem": "trabajofinal"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"name": "Prop_0",
-						"type": "String"
-					},
-					{
-						"name": "menu_id",
-						"type": "String"
-					},
-					{
-						"name": "r_id",
-						"type": "String"
-					},
-					{
-						"name": "f_id",
-						"type": "String"
-					},
-					{
-						"name": "cuisine",
-						"type": "String"
-					},
-					{
-						"name": "price",
-						"type": "String"
-					}
-				]
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/LinkedService_ADLS')]"
@@ -554,6 +467,98 @@
 					},
 					{
 						"name": "Family size",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LinkedService_ADLS')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DFood_Parquet')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LinkedService_ADLS",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"zona": {
+						"type": "string",
+						"defaultValue": "trabajofinal"
+					},
+					"archivo": {
+						"type": "string",
+						"defaultValue": "ordenes"
+					}
+				},
+				"folder": {
+					"name": "TrabajoFinal"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@dataset().archivo",
+							"type": "Expression"
+						},
+						"fileSystem": {
+							"value": "@dataset().zona",
+							"type": "Expression"
+						}
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LinkedService_ADLS')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DFood')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LinkedService_ADLS",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "TrabajoFinal"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "food.csv",
+						"fileSystem": "trabajofinal"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "N",
+						"type": "String"
+					},
+					{
+						"name": "f_id",
+						"type": "String"
+					},
+					{
+						"name": "item",
+						"type": "String"
+					},
+					{
+						"name": "veg_or_non_veg",
 						"type": "String"
 					}
 				]
@@ -709,7 +714,6 @@
 											"type": "DatasetReference",
 											"parameters": {
 												"zona": "master",
-												"directorio": "warehouse",
 												"archivo": {
 													"value": "@concat(item().Lista_tabla,'.parquet')",
 													"type": "Expression"
@@ -758,6 +762,89 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/DS_ADLS_CSV')]",
 				"[concat(variables('factoryId'), '/datasets/DS_ADLS_PARQUET')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/tf1')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copiar",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "ParquetSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings",
+									"maxConcurrentConnections": 2,
+									"copyBehavior": "PreserveHierarchy"
+								},
+								"formatSettings": {
+									"type": "ParquetWriteSettings"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "DFood",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DFood_Parquet",
+								"type": "DatasetReference",
+								"parameters": {
+									"zona": "trabajofinal/Parquet",
+									"archivo": "DFood.parquet"
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"folder": {
+					"name": "04_trabajofinal"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/DFood')]",
+				"[concat(variables('factoryId'), '/datasets/DFood_Parquet')]"
 			]
 		},
 		{
@@ -873,6 +960,77 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/DF_Food')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"folder": {
+					"name": "TrabajoFinal"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "DFood_Parquet",
+								"type": "DatasetReference"
+							},
+							"name": "FuenteFood"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "DFood_Parquet",
+								"type": "DatasetReference"
+							},
+							"name": "DestinoFood"
+						}
+					],
+					"transformations": [
+						{
+							"name": "DerivadaFood"
+						},
+						{
+							"name": "CuatroColumnas"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          N as string,",
+						"          f_id as string,",
+						"          item as string,",
+						"          veg_or_non_veg as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'parquet') ~> FuenteFood",
+						"FuenteFood derive(FechaActualizacion = currentUTC()) ~> DerivadaFood",
+						"DerivadaFood select(mapColumn(",
+						"          f_id,",
+						"          item,",
+						"          veg_or_non_veg,",
+						"          FechaActualizacion",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> CuatroColumnas",
+						"CuatroColumnas sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'parquet',",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> DestinoFood"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/DFood_Parquet')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/master_party_core')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -914,17 +1072,14 @@
 								"datasetParameters": {
 									"SourceUsuario": {
 										"zona": "master",
-										"directorio": "warehouse",
 										"archivo": "usuario.parquet"
 									},
 									"SinkHubUsuario": {
 										"zona": "master",
-										"directorio": "silver/hub_usuario",
 										"archivo": "hub_usuario.parquet"
 									},
 									"SinkSatUsuario": {
 										"zona": "master",
-										"directorio": "silver/sat_usuario",
 										"archivo": "sat_usuario.parquet"
 									}
 								}
