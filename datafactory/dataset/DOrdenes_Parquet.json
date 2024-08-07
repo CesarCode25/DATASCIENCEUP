@@ -1,0 +1,40 @@
+{
+	"name": "DOrdenes_Parquet",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LinkedService_ADLS",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "TrabajoFinal"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "Parquet",
+				"fileSystem": "trabajofinal"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "N",
+				"type": "UTF8"
+			},
+			{
+				"name": "f_id",
+				"type": "UTF8"
+			},
+			{
+				"name": "item",
+				"type": "UTF8"
+			},
+			{
+				"name": "veg_or_non_veg",
+				"type": "UTF8"
+			}
+		]
+	}
+}
