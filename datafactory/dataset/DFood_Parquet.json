@@ -12,7 +12,7 @@
 			},
 			"archivo": {
 				"type": "string",
-				"defaultValue": "ordenes"
+				"defaultValue": "Parquet"
 			}
 		},
 		"folder": {
