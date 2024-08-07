@@ -12,16 +12,54 @@
 						"referenceName": "DFood_Parquet",
 						"type": "DatasetReference"
 					},
-					"name": "fuentefood"
+					"name": "FuenteFood"
 				}
 			],
-			"sinks": [],
-			"transformations": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DFood_Parquet",
+						"type": "DatasetReference"
+					},
+					"name": "DestinoFood"
+				}
+			],
+			"transformations": [
+				{
+					"name": "DerivadaFood"
+				},
+				{
+					"name": "CuatroColumnas"
+				}
+			],
 			"scriptLines": [
-				"source(allowSchemaDrift: true,",
+				"source(output(",
+				"          N as string,",
+				"          f_id as string,",
+				"          item as string,",
+				"          veg_or_non_veg as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
-				"     format: 'parquet') ~> fuentefood"
+				"     format: 'parquet') ~> FuenteFood",
+				"FuenteFood derive(FechaActualizacion = currentUTC()) ~> DerivadaFood",
+				"DerivadaFood select(mapColumn(",
+				"          f_id,",
+				"          item,",
+				"          veg_or_non_veg,",
+				"          FechaActualizacion",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> CuatroColumnas",
+				"CuatroColumnas sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> DestinoFood"
 			]
 		}
 	}
