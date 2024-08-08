@@ -1,0 +1,207 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "adf-upds-capa-lab-8wd"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/DF_USUARIO')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "DS_ADLS_PARQUET",
+								"type": "DatasetReference"
+							},
+							"name": "SourceUsuario"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "DS_ADLS_PARQUET",
+								"type": "DatasetReference"
+							},
+							"name": "SinkHubUsuario"
+						},
+						{
+							"dataset": {
+								"referenceName": "DS_ADLS_PARQUET",
+								"type": "DatasetReference"
+							},
+							"name": "SinkSatUsuario"
+						}
+					],
+					"transformations": [
+						{
+							"name": "DerivedColumn"
+						},
+						{
+							"name": "HubUsuarioSelect"
+						},
+						{
+							"name": "SatUsuario"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          Id as string,",
+						"          CreationDate as string,",
+						"          DownVotes as string,",
+						"          LastAccessDate as string,",
+						"          Reputation as string,",
+						"          UpVotes as string,",
+						"          Views as string,",
+						"          AccountId as string,",
+						"          Email as string,",
+						"          location as string,",
+						"          update as string,",
+						"          owner as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'parquet') ~> SourceUsuario",
+						"SourceUsuario derive(HK_USUARIO = Id,",
+						"          CODUSUARIO = AccountId,",
+						"          FECCARGA = currentUTC(),",
+						"          REGFUENTE = \"SHAREDKNOW\",",
+						"          FECCREATION = CreationDate,",
+						"          NUMDOWNVOTES = DownVotes,",
+						"          EMAIL = Email) ~> DerivedColumn",
+						"DerivedColumn select(mapColumn(",
+						"          HK_USUARIO,",
+						"          CODUSUARIO,",
+						"          FECCARGA,",
+						"          REGFUENTE",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> HubUsuarioSelect",
+						"DerivedColumn select(mapColumn(",
+						"          HK_USUARIO,",
+						"          FECCARGA,",
+						"          REGFUENTE,",
+						"          FECCREATION,",
+						"          NUMDOWNVOTES,",
+						"          EMAIL = DerivedColumn@EMAIL",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SatUsuario",
+						"HubUsuarioSelect sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'parquet',",
+						"     filePattern:'hub_usuario_[n].parquet',",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SinkHubUsuario",
+						"SatUsuario sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'parquet',",
+						"     filePattern:'sat_usuario_[n].parquet',",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SinkSatUsuario"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/master_party_core')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Set variable1",
+						"type": "SetVariable",
+						"state": "Inactive",
+						"onInactiveMarkAs": "Succeeded",
+						"dependsOn": [],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "mensaje",
+							"value": "hola"
+						}
+					},
+					{
+						"name": "DataFlowUsuario",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "DF_USUARIO",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"SourceUsuario": {
+										"zona": "master",
+										"archivo": "usuario.parquet"
+									},
+									"SinkHubUsuario": {
+										"zona": "master",
+										"archivo": "hub_usuario.parquet"
+									},
+									"SinkSatUsuario": {
+										"zona": "master",
+										"archivo": "sat_usuario.parquet"
+									}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"variables": {
+					"mensaje": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "02_master_models"
+				},
+				"annotations": [],
+				"lastPublishTime": "2024-07-08T21:50:29Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/DF_USUARIO')]"
+			]
+		}
+	]
+}

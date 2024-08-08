@@ -104,6 +104,98 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/DFood')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LinkedService_ADLS",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "TrabajoFinal"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "food.csv",
+						"fileSystem": "trabajofinal"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "N",
+						"type": "String"
+					},
+					{
+						"name": "f_id",
+						"type": "String"
+					},
+					{
+						"name": "item",
+						"type": "String"
+					},
+					{
+						"name": "veg_or_non_veg",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LinkedService_ADLS')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DFood_Parquet')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LinkedService_ADLS",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"zona": {
+						"type": "string",
+						"defaultValue": "trabajofinal"
+					},
+					"archivo": {
+						"type": "string",
+						"defaultValue": "Parquet"
+					}
+				},
+				"folder": {
+					"name": "TrabajoFinal"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@dataset().archivo",
+							"type": "Expression"
+						},
+						"fileSystem": {
+							"value": "@dataset().zona",
+							"type": "Expression"
+						}
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LinkedService_ADLS')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/DMenu')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -152,6 +244,51 @@
 					{
 						"name": "price",
 						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LinkedService_ADLS')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DMenu_Parquet')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LinkedService_ADLS",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "TrabajoFinal"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "Parquet",
+						"fileSystem": "trabajofinal"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": [
+					{
+						"name": "N",
+						"type": "UTF8"
+					},
+					{
+						"name": "f_id",
+						"type": "UTF8"
+					},
+					{
+						"name": "item",
+						"type": "UTF8"
+					},
+					{
+						"name": "veg_or_non_veg",
+						"type": "UTF8"
 					}
 				]
 			},
@@ -220,6 +357,51 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/DOrdenes_Parquet')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LinkedService_ADLS",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "TrabajoFinal"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "Parquet",
+						"fileSystem": "trabajofinal"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": [
+					{
+						"name": "N",
+						"type": "UTF8"
+					},
+					{
+						"name": "f_id",
+						"type": "UTF8"
+					},
+					{
+						"name": "item",
+						"type": "UTF8"
+					},
+					{
+						"name": "veg_or_non_veg",
+						"type": "UTF8"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LinkedService_ADLS')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/DRestaurantes')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -240,13 +422,14 @@
 						"fileSystem": "trabajofinal"
 					},
 					"columnDelimiter": ",",
+					"rowDelimiter": "\n",
 					"escapeChar": "\\",
 					"firstRowAsHeader": true,
 					"quoteChar": "\""
 				},
 				"schema": [
 					{
-						"name": "Prop_0",
+						"name": "N",
 						"type": "String"
 					},
 					{
@@ -292,6 +475,51 @@
 					{
 						"name": "menu",
 						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LinkedService_ADLS')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DRestaurantes_Parquet')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LinkedService_ADLS",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "TrabajoFinal"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "Parquet",
+						"fileSystem": "trabajofinal"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": [
+					{
+						"name": "N",
+						"type": "UTF8"
+					},
+					{
+						"name": "f_id",
+						"type": "UTF8"
+					},
+					{
+						"name": "item",
+						"type": "UTF8"
+					},
+					{
+						"name": "veg_or_non_veg",
+						"type": "UTF8"
 					}
 				]
 			},
@@ -476,95 +704,326 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/DFood_Parquet')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
+			"name": "[concat(parameters('factoryName'), '/PLFood')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LinkedService_ADLS",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"zona": {
-						"type": "string",
-						"defaultValue": "trabajofinal"
-					},
-					"archivo": {
-						"type": "string",
-						"defaultValue": "ordenes"
+				"activities": [
+					{
+						"name": "Copiar",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "ParquetSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings",
+									"maxConcurrentConnections": 2,
+									"copyBehavior": "PreserveHierarchy"
+								},
+								"formatSettings": {
+									"type": "ParquetWriteSettings"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "DFood",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DFood_Parquet",
+								"type": "DatasetReference",
+								"parameters": {
+									"zona": "trabajofinal/Parquet",
+									"archivo": "DFood.parquet"
+								}
+							}
+						]
 					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
 				},
 				"folder": {
-					"name": "TrabajoFinal"
+					"name": "04_trabajofinal"
 				},
-				"annotations": [],
-				"type": "Parquet",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": {
-							"value": "@dataset().archivo",
-							"type": "Expression"
-						},
-						"fileSystem": {
-							"value": "@dataset().zona",
-							"type": "Expression"
-						}
-					},
-					"compressionCodec": "snappy"
-				},
-				"schema": []
+				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LinkedService_ADLS')]"
+				"[concat(variables('factoryId'), '/datasets/DFood')]",
+				"[concat(variables('factoryId'), '/datasets/DFood_Parquet')]"
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/DFood')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
+			"name": "[concat(parameters('factoryName'), '/PLMenu')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LinkedService_ADLS",
-					"type": "LinkedServiceReference"
+				"activities": [
+					{
+						"name": "Copiar",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "ParquetSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings",
+									"maxConcurrentConnections": 2,
+									"copyBehavior": "PreserveHierarchy"
+								},
+								"formatSettings": {
+									"type": "ParquetWriteSettings"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "DMenu",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DMenu_Parquet",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
 				},
 				"folder": {
-					"name": "TrabajoFinal"
+					"name": "04_trabajofinal"
 				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": "food.csv",
-						"fileSystem": "trabajofinal"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"name": "N",
-						"type": "String"
-					},
-					{
-						"name": "f_id",
-						"type": "String"
-					},
-					{
-						"name": "item",
-						"type": "String"
-					},
-					{
-						"name": "veg_or_non_veg",
-						"type": "String"
-					}
-				]
+				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LinkedService_ADLS')]"
+				"[concat(variables('factoryId'), '/datasets/DMenu')]",
+				"[concat(variables('factoryId'), '/datasets/DMenu_Parquet')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PLOrdenes')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copiar",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "ParquetSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings",
+									"maxConcurrentConnections": 2,
+									"copyBehavior": "PreserveHierarchy"
+								},
+								"formatSettings": {
+									"type": "ParquetWriteSettings"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "DOrdenes",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DOrdenes_Parquet",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"folder": {
+					"name": "04_trabajofinal"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/DOrdenes')]",
+				"[concat(variables('factoryId'), '/datasets/DOrdenes_Parquet')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PLRestaurantes')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copiar",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "ParquetSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings",
+									"maxConcurrentConnections": 2,
+									"copyBehavior": "PreserveHierarchy"
+								},
+								"formatSettings": {
+									"type": "ParquetWriteSettings"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "DRestaurantes",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DRestaurantes_Parquet",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"folder": {
+					"name": "04_trabajofinal"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/DRestaurantes')]",
+				"[concat(variables('factoryId'), '/datasets/DRestaurantes_Parquet')]"
 			]
 		},
 		{
@@ -765,201 +1224,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/tf1')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Copiar",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "DelimitedTextSource",
-								"storeSettings": {
-									"type": "AzureBlobFSReadSettings",
-									"recursive": true,
-									"enablePartitionDiscovery": false
-								},
-								"formatSettings": {
-									"type": "DelimitedTextReadSettings"
-								}
-							},
-							"sink": {
-								"type": "ParquetSink",
-								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings",
-									"maxConcurrentConnections": 2,
-									"copyBehavior": "PreserveHierarchy"
-								},
-								"formatSettings": {
-									"type": "ParquetWriteSettings"
-								}
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "DFood",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "DFood_Parquet",
-								"type": "DatasetReference",
-								"parameters": {
-									"zona": "trabajofinal/Parquet",
-									"archivo": "DFood.parquet"
-								}
-							}
-						]
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"folder": {
-					"name": "04_trabajofinal"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/DFood')]",
-				"[concat(variables('factoryId'), '/datasets/DFood_Parquet')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DF_USUARIO')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "DS_ADLS_PARQUET",
-								"type": "DatasetReference"
-							},
-							"name": "SourceUsuario"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "DS_ADLS_PARQUET",
-								"type": "DatasetReference"
-							},
-							"name": "SinkHubUsuario"
-						},
-						{
-							"dataset": {
-								"referenceName": "DS_ADLS_PARQUET",
-								"type": "DatasetReference"
-							},
-							"name": "SinkSatUsuario"
-						}
-					],
-					"transformations": [
-						{
-							"name": "DerivedColumn"
-						},
-						{
-							"name": "HubUsuarioSelect"
-						},
-						{
-							"name": "SatUsuario"
-						}
-					],
-					"scriptLines": [
-						"source(output(",
-						"          Id as string,",
-						"          CreationDate as string,",
-						"          DownVotes as string,",
-						"          LastAccessDate as string,",
-						"          Reputation as string,",
-						"          UpVotes as string,",
-						"          Views as string,",
-						"          AccountId as string,",
-						"          Email as string,",
-						"          location as string,",
-						"          update as string,",
-						"          owner as string",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false,",
-						"     format: 'parquet') ~> SourceUsuario",
-						"SourceUsuario derive(HK_USUARIO = Id,",
-						"          CODUSUARIO = AccountId,",
-						"          FECCARGA = currentUTC(),",
-						"          REGFUENTE = \"SHAREDKNOW\",",
-						"          FECCREATION = CreationDate,",
-						"          NUMDOWNVOTES = DownVotes,",
-						"          EMAIL = Email) ~> DerivedColumn",
-						"DerivedColumn select(mapColumn(",
-						"          HK_USUARIO,",
-						"          CODUSUARIO,",
-						"          FECCARGA,",
-						"          REGFUENTE",
-						"     ),",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> HubUsuarioSelect",
-						"DerivedColumn select(mapColumn(",
-						"          HK_USUARIO,",
-						"          FECCARGA,",
-						"          REGFUENTE,",
-						"          FECCREATION,",
-						"          NUMDOWNVOTES,",
-						"          EMAIL = DerivedColumn@EMAIL",
-						"     ),",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> SatUsuario",
-						"HubUsuarioSelect sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     format: 'parquet',",
-						"     filePattern:'hub_usuario_[n].parquet',",
-						"     umask: 0022,",
-						"     preCommands: [],",
-						"     postCommands: [],",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> SinkHubUsuario",
-						"SatUsuario sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     format: 'parquet',",
-						"     filePattern:'sat_usuario_[n].parquet',",
-						"     umask: 0022,",
-						"     preCommands: [],",
-						"     postCommands: [],",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> SinkSatUsuario"
-					]
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/DS_ADLS_PARQUET')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/DF_Food')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
@@ -1028,87 +1292,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/DFood_Parquet')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/master_party_core')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Set variable1",
-						"type": "SetVariable",
-						"state": "Inactive",
-						"onInactiveMarkAs": "Succeeded",
-						"dependsOn": [],
-						"policy": {
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"variableName": "mensaje",
-							"value": "hola"
-						}
-					},
-					{
-						"name": "DataFlowUsuario",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "DF_USUARIO",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"SourceUsuario": {
-										"zona": "master",
-										"archivo": "usuario.parquet"
-									},
-									"SinkHubUsuario": {
-										"zona": "master",
-										"archivo": "hub_usuario.parquet"
-									},
-									"SinkSatUsuario": {
-										"zona": "master",
-										"archivo": "sat_usuario.parquet"
-									}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"variables": {
-					"mensaje": {
-						"type": "String"
-					}
-				},
-				"folder": {
-					"name": "02_master_models"
-				},
-				"annotations": [],
-				"lastPublishTime": "2024-07-08T21:50:29Z"
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/DF_USUARIO')]"
 			]
 		}
 	]
