@@ -29,20 +29,6 @@
 								"type": "DatasetReference"
 							},
 							"name": "FuenteFood"
-						},
-						{
-							"dataset": {
-								"referenceName": "DMenu_Parquet",
-								"type": "DatasetReference"
-							},
-							"name": "FuenteMenu"
-						},
-						{
-							"dataset": {
-								"referenceName": "DOrdenes_Parquet",
-								"type": "DatasetReference"
-							},
-							"name": "FuenteOrdenes"
 						}
 					],
 					"sinks": [
@@ -52,13 +38,6 @@
 								"type": "DatasetReference"
 							},
 							"name": "DestinoFood"
-						},
-						{
-							"dataset": {
-								"referenceName": "DMenu_Parquet",
-								"type": "DatasetReference"
-							},
-							"name": "DestinoMenu"
 						}
 					],
 					"transformations": [
@@ -67,12 +46,6 @@
 						},
 						{
 							"name": "CuatroColumnas"
-						},
-						{
-							"name": "DerivadaFuenteMenu"
-						},
-						{
-							"name": "select1"
 						}
 					],
 					"scriptLines": [
@@ -86,26 +59,6 @@
 						"     validateSchema: false,",
 						"     ignoreNoFilesFound: false,",
 						"     format: 'parquet') ~> FuenteFood",
-						"source(output(",
-						"          N as string,",
-						"          f_id as string,",
-						"          item as string,",
-						"          veg_or_non_veg as string",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false,",
-						"     format: 'parquet') ~> FuenteMenu",
-						"source(output(",
-						"          N as string,",
-						"          f_id as string,",
-						"          item as string,",
-						"          veg_or_non_veg as string",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false,",
-						"     format: 'parquet') ~> FuenteOrdenes",
 						"FuenteFood derive(FechaActualizacion = currentUTC()) ~> DerivadaFood",
 						"DerivadaFood select(mapColumn(",
 						"          f_id,",
@@ -115,15 +68,6 @@
 						"     ),",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true) ~> CuatroColumnas",
-						"FuenteMenu derive(FechadeActualizacion = currentUTC()) ~> DerivadaFuenteMenu",
-						"DerivadaFuenteMenu select(mapColumn(",
-						"          f_id,",
-						"          item,",
-						"          veg_or_non_veg,",
-						"          FechadeActualizacion",
-						"     ),",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> select1",
 						"CuatroColumnas sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     format: 'parquet',",
@@ -131,21 +75,7 @@
 						"     preCommands: [],",
 						"     postCommands: [],",
 						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> DestinoFood",
-						"select1 sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     input(",
-						"          N as string,",
-						"          f_id as string,",
-						"          item as string,",
-						"          veg_or_non_veg as string",
-						"     ),",
-						"     format: 'parquet',",
-						"     umask: 0022,",
-						"     preCommands: [],",
-						"     postCommands: [],",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> DestinoMenu"
+						"     skipDuplicateMapOutputs: true) ~> DestinoFood"
 					]
 				}
 			},
@@ -335,6 +265,255 @@
 					"name": "04_trabajofinal"
 				},
 				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DF_Menu')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"folder": {
+					"name": "TrabajoFinal"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "DMenu_Parquet",
+								"type": "DatasetReference"
+							},
+							"name": "FuenteMenu"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "DMenu_Parquet",
+								"type": "DatasetReference"
+							},
+							"name": "DestinoMenu"
+						}
+					],
+					"transformations": [
+						{
+							"name": "DerivadaMenu"
+						},
+						{
+							"name": "CuatroColumnas"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          N as string,",
+						"          menu_id as string,",
+						"          r_id as string,",
+						"          f_id as string,",
+						"          cuisine as string,",
+						"          price as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'parquet') ~> FuenteMenu",
+						"FuenteMenu derive(FechaActualizacion = currentUTC()) ~> DerivadaMenu",
+						"DerivadaMenu select(mapColumn(",
+						"          menu_id,",
+						"          r_id,",
+						"          f_id,",
+						"          cuisine,",
+						"          price,",
+						"          FechaActualizacion",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> CuatroColumnas",
+						"CuatroColumnas sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          N as string,",
+						"          f_id as string,",
+						"          item as string,",
+						"          veg_or_non_veg as string",
+						"     ),",
+						"     format: 'parquet',",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> DestinoMenu"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DF_Ordenes')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"folder": {
+					"name": "TrabajoFinal"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "DOrdenes_Parquet",
+								"type": "DatasetReference"
+							},
+							"name": "FuenteOrdenes"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "DOrdenes_Parquet",
+								"type": "DatasetReference"
+							},
+							"name": "DestinoOrdenes"
+						}
+					],
+					"transformations": [
+						{
+							"name": "DerivadaOrdenes"
+						},
+						{
+							"name": "SieteColumnas"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          N as string,",
+						"          order_date as string,",
+						"          sales_qty as string,",
+						"          sales_amount as string,",
+						"          currency as string,",
+						"          user_id as string,",
+						"          r_id as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'parquet') ~> FuenteOrdenes",
+						"FuenteOrdenes derive(FechaActualizacion = currentUTC()) ~> DerivadaOrdenes",
+						"DerivadaOrdenes select(mapColumn(",
+						"          order_date,",
+						"          sales_qty,",
+						"          sales_amount,",
+						"          currency,",
+						"          user_id,",
+						"          r_id,",
+						"          FechaActualizacion",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> SieteColumnas",
+						"SieteColumnas sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          N as string,",
+						"          f_id as string,",
+						"          item as string,",
+						"          veg_or_non_veg as string",
+						"     ),",
+						"     format: 'parquet',",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> DestinoOrdenes"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DF_Usuarios')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"folder": {
+					"name": "TrabajoFinal"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "DUsuarios_Parquet",
+								"type": "DatasetReference"
+							},
+							"name": "FuenteUsuario"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "DUsuarios_Parquet",
+								"type": "DatasetReference"
+							},
+							"name": "DestinoUsuario"
+						}
+					],
+					"transformations": [
+						{
+							"name": "DerivadaUsuario"
+						},
+						{
+							"name": "CuatroColumnas"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          N as string,",
+						"          userid as string,",
+						"          name as string,",
+						"          email as string,",
+						"          password as string,",
+						"          Age as string,",
+						"          Gender as string,",
+						"          Marital_Status as string,",
+						"          Occupation as string,",
+						"          Monthly_Income as string,",
+						"          Educational_Qualifications as string,",
+						"          Family_size as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'parquet') ~> FuenteUsuario",
+						"FuenteUsuario derive(FechaActualizacion = currentUTC()) ~> DerivadaUsuario",
+						"DerivadaUsuario select(mapColumn(",
+						"          userid,",
+						"          name,",
+						"          Age,",
+						"          Gender,",
+						"          Marital_Status,",
+						"          Occupation,",
+						"          Monthly_Income,",
+						"          Educational_Qualifications,",
+						"          Family_size,",
+						"          FechaActualizacion",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> CuatroColumnas",
+						"CuatroColumnas sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          N as string,",
+						"          f_id as string,",
+						"          item as string,",
+						"          veg_or_non_veg as string",
+						"     ),",
+						"     format: 'parquet',",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> DestinoUsuario"
+					]
+				}
 			},
 			"dependsOn": []
 		},
