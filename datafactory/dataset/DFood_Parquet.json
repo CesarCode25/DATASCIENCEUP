@@ -23,14 +23,9 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": {
-					"value": "@dataset().archivo",
-					"type": "Expression"
-				},
-				"fileSystem": {
-					"value": "@dataset().zona",
-					"type": "Expression"
-				}
+				"fileName": "DFood.parquet",
+				"folderPath": "Parquet",
+				"fileSystem": "trabajofinal"
 			},
 			"compressionCodec": "snappy"
 		},
