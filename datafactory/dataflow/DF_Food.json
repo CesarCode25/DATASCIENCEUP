@@ -15,7 +15,18 @@
 					"name": "FuenteFood"
 				},
 				{
-					"name": "FuenteUsuarios"
+					"dataset": {
+						"referenceName": "DMenu_Parquet",
+						"type": "DatasetReference"
+					},
+					"name": "FuenteMenu"
+				},
+				{
+					"dataset": {
+						"referenceName": "DOrdenes_Parquet",
+						"type": "DatasetReference"
+					},
+					"name": "FuenteOrdenes"
 				}
 			],
 			"sinks": [
@@ -25,6 +36,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "DestinoFood"
+				},
+				{
+					"dataset": {
+						"referenceName": "DMenu_Parquet",
+						"type": "DatasetReference"
+					},
+					"name": "DestinoMenu"
 				}
 			],
 			"transformations": [
@@ -33,6 +51,12 @@
 				},
 				{
 					"name": "CuatroColumnas"
+				},
+				{
+					"name": "DerivadaFuenteMenu"
+				},
+				{
+					"name": "select1"
 				}
 			],
 			"scriptLines": [
@@ -46,8 +70,26 @@
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
 				"     format: 'parquet') ~> FuenteFood",
-				"source(allowSchemaDrift: true,",
-				"     validateSchema: false) ~> FuenteUsuarios",
+				"source(output(",
+				"          N as string,",
+				"          f_id as string,",
+				"          item as string,",
+				"          veg_or_non_veg as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> FuenteMenu",
+				"source(output(",
+				"          N as string,",
+				"          f_id as string,",
+				"          item as string,",
+				"          veg_or_non_veg as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> FuenteOrdenes",
 				"FuenteFood derive(FechaActualizacion = currentUTC()) ~> DerivadaFood",
 				"DerivadaFood select(mapColumn(",
 				"          f_id,",
@@ -57,6 +99,15 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> CuatroColumnas",
+				"FuenteMenu derive(FechadeActualizacion = currentUTC()) ~> DerivadaFuenteMenu",
+				"DerivadaFuenteMenu select(mapColumn(",
+				"          f_id,",
+				"          item,",
+				"          veg_or_non_veg,",
+				"          FechadeActualizacion",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
 				"CuatroColumnas sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'parquet',",
@@ -64,7 +115,21 @@
 				"     preCommands: [],",
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> DestinoFood"
+				"     skipDuplicateMapOutputs: true) ~> DestinoFood",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          N as string,",
+				"          f_id as string,",
+				"          item as string,",
+				"          veg_or_non_veg as string",
+				"     ),",
+				"     format: 'parquet',",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> DestinoMenu"
 			]
 		}
 	}
