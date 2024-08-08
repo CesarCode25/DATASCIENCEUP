@@ -1,0 +1,86 @@
+{
+	"name": "DF_Usuarios",
+	"properties": {
+		"folder": {
+			"name": "TrabajoFinal"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DUsuarios_Parquet",
+						"type": "DatasetReference"
+					},
+					"name": "FuenteUsuario"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DUsuarios_Parquet",
+						"type": "DatasetReference"
+					},
+					"name": "DestinoUsuario"
+				}
+			],
+			"transformations": [
+				{
+					"name": "DerivadaUsuario"
+				},
+				{
+					"name": "CuatroColumnas"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          N as string,",
+				"          userid as string,",
+				"          name as string,",
+				"          email as string,",
+				"          password as string,",
+				"          Age as string,",
+				"          Gender as string,",
+				"          Marital_Status as string,",
+				"          Occupation as string,",
+				"          Monthly_Income as string,",
+				"          Educational_Qualifications as string,",
+				"          Family_size as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> FuenteUsuario",
+				"FuenteUsuario derive(FechaActualizacion = currentUTC()) ~> DerivadaUsuario",
+				"DerivadaUsuario select(mapColumn(",
+				"          userid,",
+				"          name,",
+				"          Age,",
+				"          Gender,",
+				"          Marital_Status,",
+				"          Occupation,",
+				"          Monthly_Income,",
+				"          Educational_Qualifications,",
+				"          Family_size,",
+				"          FechaActualizacion",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> CuatroColumnas",
+				"CuatroColumnas sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          N as string,",
+				"          f_id as string,",
+				"          item as string,",
+				"          veg_or_non_veg as string",
+				"     ),",
+				"     format: 'parquet',",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> DestinoUsuario"
+			]
+		}
+	}
+}
