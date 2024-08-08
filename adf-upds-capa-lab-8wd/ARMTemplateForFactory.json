@@ -766,14 +766,9 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
-						"fileName": {
-							"value": "@dataset().archivo",
-							"type": "Expression"
-						},
-						"fileSystem": {
-							"value": "@dataset().zona",
-							"type": "Expression"
-						}
+						"fileName": "DFood.parquet",
+						"folderPath": "Parquet",
+						"fileSystem": "trabajofinal"
 					},
 					"compressionCodec": "snappy"
 				},
@@ -856,6 +851,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
+						"fileName": "menu.parquet",
 						"folderPath": "Parquet",
 						"fileSystem": "trabajofinal"
 					},
@@ -961,6 +957,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
+						"fileName": "orders.parquet",
 						"folderPath": "Parquet",
 						"fileSystem": "trabajofinal"
 					},
@@ -1321,6 +1318,20 @@
 								"type": "DatasetReference"
 							},
 							"name": "FuenteFood"
+						},
+						{
+							"dataset": {
+								"referenceName": "DMenu_Parquet",
+								"type": "DatasetReference"
+							},
+							"name": "FuenteMenu"
+						},
+						{
+							"dataset": {
+								"referenceName": "DOrdenes_Parquet",
+								"type": "DatasetReference"
+							},
+							"name": "FuenteOrdenes"
 						}
 					],
 					"sinks": [
@@ -1330,6 +1341,13 @@
 								"type": "DatasetReference"
 							},
 							"name": "DestinoFood"
+						},
+						{
+							"dataset": {
+								"referenceName": "DMenu_Parquet",
+								"type": "DatasetReference"
+							},
+							"name": "DestinoMenu"
 						}
 					],
 					"transformations": [
@@ -1338,6 +1356,12 @@
 						},
 						{
 							"name": "CuatroColumnas"
+						},
+						{
+							"name": "DerivadaFuenteMenu"
+						},
+						{
+							"name": "select1"
 						}
 					],
 					"scriptLines": [
@@ -1351,6 +1375,26 @@
 						"     validateSchema: false,",
 						"     ignoreNoFilesFound: false,",
 						"     format: 'parquet') ~> FuenteFood",
+						"source(output(",
+						"          N as string,",
+						"          f_id as string,",
+						"          item as string,",
+						"          veg_or_non_veg as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'parquet') ~> FuenteMenu",
+						"source(output(",
+						"          N as string,",
+						"          f_id as string,",
+						"          item as string,",
+						"          veg_or_non_veg as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'parquet') ~> FuenteOrdenes",
 						"FuenteFood derive(FechaActualizacion = currentUTC()) ~> DerivadaFood",
 						"DerivadaFood select(mapColumn(",
 						"          f_id,",
@@ -1360,6 +1404,15 @@
 						"     ),",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true) ~> CuatroColumnas",
+						"FuenteMenu derive(FechadeActualizacion = currentUTC()) ~> DerivadaFuenteMenu",
+						"DerivadaFuenteMenu select(mapColumn(",
+						"          f_id,",
+						"          item,",
+						"          veg_or_non_veg,",
+						"          FechadeActualizacion",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1",
 						"CuatroColumnas sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     format: 'parquet',",
@@ -1367,12 +1420,28 @@
 						"     preCommands: [],",
 						"     postCommands: [],",
 						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> DestinoFood"
+						"     skipDuplicateMapOutputs: true) ~> DestinoFood",
+						"select1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          N as string,",
+						"          f_id as string,",
+						"          item as string,",
+						"          veg_or_non_veg as string",
+						"     ),",
+						"     format: 'parquet',",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> DestinoMenu"
 					]
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/DFood_Parquet')]"
+				"[concat(variables('factoryId'), '/datasets/DFood_Parquet')]",
+				"[concat(variables('factoryId'), '/datasets/DMenu_Parquet')]",
+				"[concat(variables('factoryId'), '/datasets/DOrdenes_Parquet')]"
 			]
 		},
 		{
@@ -1485,6 +1554,132 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/DS_ADLS_PARQUET')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DUsuarios_Parquet')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LinkedService_ADLS",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "TrabajoFinal"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "users.parquet",
+						"folderPath": "Parquet",
+						"fileSystem": "trabajofinal"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": [
+					{
+						"name": "N",
+						"type": "UTF8"
+					},
+					{
+						"name": "f_id",
+						"type": "UTF8"
+					},
+					{
+						"name": "item",
+						"type": "UTF8"
+					},
+					{
+						"name": "veg_or_non_veg",
+						"type": "UTF8"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LinkedService_ADLS')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PLUsuarios')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copiar",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "ParquetSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings",
+									"maxConcurrentConnections": 2,
+									"copyBehavior": "PreserveHierarchy"
+								},
+								"formatSettings": {
+									"type": "ParquetWriteSettings"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "DUsuarios",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DUsuarios_Parquet",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"folder": {
+					"name": "04_trabajofinal"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/DUsuarios')]",
+				"[concat(variables('factoryId'), '/datasets/DUsuarios_Parquet')]"
 			]
 		}
 	]

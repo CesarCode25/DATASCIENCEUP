@@ -178,14 +178,9 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
-						"fileName": {
-							"value": "@dataset().archivo",
-							"type": "Expression"
-						},
-						"fileSystem": {
-							"value": "@dataset().zona",
-							"type": "Expression"
-						}
+						"fileName": "DFood.parquet",
+						"folderPath": "Parquet",
+						"fileSystem": "trabajofinal"
 					},
 					"compressionCodec": "snappy"
 				},
@@ -268,6 +263,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
+						"fileName": "menu.parquet",
 						"folderPath": "Parquet",
 						"fileSystem": "trabajofinal"
 					},
@@ -373,6 +369,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
+						"fileName": "orders.parquet",
 						"folderPath": "Parquet",
 						"fileSystem": "trabajofinal"
 					},
@@ -696,6 +693,52 @@
 					{
 						"name": "Family size",
 						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LinkedService_ADLS')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DUsuarios_Parquet')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LinkedService_ADLS",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "TrabajoFinal"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "users.parquet",
+						"folderPath": "Parquet",
+						"fileSystem": "trabajofinal"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": [
+					{
+						"name": "N",
+						"type": "UTF8"
+					},
+					{
+						"name": "f_id",
+						"type": "UTF8"
+					},
+					{
+						"name": "item",
+						"type": "UTF8"
+					},
+					{
+						"name": "veg_or_non_veg",
+						"type": "UTF8"
 					}
 				]
 			},
@@ -1221,77 +1264,6 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/DS_ADLS_CSV')]",
 				"[concat(variables('factoryId'), '/datasets/DS_ADLS_PARQUET')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DF_Food')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"folder": {
-					"name": "TrabajoFinal"
-				},
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "DFood_Parquet",
-								"type": "DatasetReference"
-							},
-							"name": "FuenteFood"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "DFood_Parquet",
-								"type": "DatasetReference"
-							},
-							"name": "DestinoFood"
-						}
-					],
-					"transformations": [
-						{
-							"name": "DerivadaFood"
-						},
-						{
-							"name": "CuatroColumnas"
-						}
-					],
-					"scriptLines": [
-						"source(output(",
-						"          N as string,",
-						"          f_id as string,",
-						"          item as string,",
-						"          veg_or_non_veg as string",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false,",
-						"     format: 'parquet') ~> FuenteFood",
-						"FuenteFood derive(FechaActualizacion = currentUTC()) ~> DerivadaFood",
-						"DerivadaFood select(mapColumn(",
-						"          f_id,",
-						"          item,",
-						"          veg_or_non_veg,",
-						"          FechaActualizacion",
-						"     ),",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> CuatroColumnas",
-						"CuatroColumnas sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     format: 'parquet',",
-						"     umask: 0022,",
-						"     preCommands: [],",
-						"     postCommands: [],",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> DestinoFood"
-					]
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/DFood_Parquet')]"
 			]
 		}
 	]
