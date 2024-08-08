@@ -13,7 +13,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "restaurant.csv",
+				"fileName": "restaurant - copia.csv",
 				"fileSystem": "trabajofinal"
 			},
 			"columnDelimiter": ",",
