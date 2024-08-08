@@ -1,0 +1,78 @@
+{
+	"name": "DF_Ordenes",
+	"properties": {
+		"folder": {
+			"name": "TrabajoFinal"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DOrdenes_Parquet",
+						"type": "DatasetReference"
+					},
+					"name": "FuenteOrdenes"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DOrdenes_Parquet",
+						"type": "DatasetReference"
+					},
+					"name": "DestinoOrdenes"
+				}
+			],
+			"transformations": [
+				{
+					"name": "DerivadaOrdenes"
+				},
+				{
+					"name": "SieteColumnas"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          N as string,",
+				"          order_date as string,",
+				"          sales_qty as string,",
+				"          sales_amount as string,",
+				"          currency as string,",
+				"          user_id as string,",
+				"          r_id as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> FuenteOrdenes",
+				"FuenteOrdenes derive(FechaActualizacion = currentUTC()) ~> DerivadaOrdenes",
+				"DerivadaOrdenes select(mapColumn(",
+				"          order_date,",
+				"          sales_qty,",
+				"          sales_amount,",
+				"          currency,",
+				"          user_id,",
+				"          r_id,",
+				"          FechaActualizacion",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SieteColumnas",
+				"SieteColumnas sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          N as string,",
+				"          f_id as string,",
+				"          item as string,",
+				"          veg_or_non_veg as string",
+				"     ),",
+				"     format: 'parquet',",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> DestinoOrdenes"
+			]
+		}
+	}
+}
