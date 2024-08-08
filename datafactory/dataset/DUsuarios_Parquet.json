@@ -13,6 +13,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
+				"fileName": "users.parquet",
 				"folderPath": "Parquet",
 				"fileSystem": "trabajofinal"
 			},
