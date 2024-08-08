@@ -1,0 +1,76 @@
+{
+	"name": "DF_Menu",
+	"properties": {
+		"folder": {
+			"name": "TrabajoFinal"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DMenu_Parquet",
+						"type": "DatasetReference"
+					},
+					"name": "FuenteMenu"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DMenu_Parquet",
+						"type": "DatasetReference"
+					},
+					"name": "DestinoMenu"
+				}
+			],
+			"transformations": [
+				{
+					"name": "DerivadaMenu"
+				},
+				{
+					"name": "CuatroColumnas"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          N as string,",
+				"          menu_id as string,",
+				"          r_id as string,",
+				"          f_id as string,",
+				"          cuisine as string,",
+				"          price as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> FuenteMenu",
+				"FuenteMenu derive(FechaActualizacion = currentUTC()) ~> DerivadaMenu",
+				"DerivadaMenu select(mapColumn(",
+				"          menu_id,",
+				"          r_id,",
+				"          f_id,",
+				"          cuisine,",
+				"          price,",
+				"          FechaActualizacion",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> CuatroColumnas",
+				"CuatroColumnas sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          N as string,",
+				"          f_id as string,",
+				"          item as string,",
+				"          veg_or_non_veg as string",
+				"     ),",
+				"     format: 'parquet',",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> DestinoMenu"
+			]
+		}
+	}
+}
